@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -13,17 +13,33 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
+  // Redirect if no Supabase client (missing env vars)
+  useEffect(() => {
+    if (!supabase) {
+      setError('Application configuration error. Please check environment variables.')
+    }
+  }, [supabase])
+
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!supabase) {
+      setError('Cannot connect to authentication service')
+      return
+    }
+    
     setError(null)
+    setIsLoading(true)
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
+
+    setIsLoading(false)
 
     if (error) {
       setError(error.message)
@@ -56,6 +72,7 @@ export default function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={!supabase || isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -66,11 +83,12 @@ export default function Login() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={!supabase || isLoading}
               />
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
-            <Button type="submit" className="w-full">
-              Log In
+            <Button type="submit" className="w-full" disabled={!supabase || isLoading}>
+              {isLoading ? 'Logging in...' : 'Log In'}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">

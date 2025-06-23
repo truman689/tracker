@@ -834,6 +834,12 @@ export default function DashboardPage() {
   const supabase = createClient()
 
   useEffect(() => {
+    if (!supabase) {
+      // Redirect to login if Supabase is not available
+      window.location.href = '/login'
+      return
+    }
+
     const fetchSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
@@ -856,6 +862,8 @@ export default function DashboardPage() {
   }, [session])
 
   const fetchHabits = async () => {
+    if (!supabase) return
+    
     const { data: habits, error } = await supabase
       .from('habits')
       .select('*')
@@ -869,6 +877,8 @@ export default function DashboardPage() {
   }
 
   const handleSignOut = async () => {
+    if (!supabase) return
+    
     await supabase.auth.signOut()
     window.location.href = '/login'
   }
@@ -882,7 +892,7 @@ export default function DashboardPage() {
   ]
 
   const addHabit = async (habitData: Omit<Habit, "id" | "history" | "totalCompletions" | "currentStreak" | "longestStreak" | "created_at" | "user_id">) => {
-    if (!session) return;
+    if (!session || !supabase) return;
     
     const newHabitForDB = {
       ...habitData,
@@ -906,6 +916,8 @@ export default function DashboardPage() {
   }
 
   const toggleHabit = async (habitId: string, dateToToggle: Date) => {
+    if (!supabase) return
+    
     const dateStr = dateToToggle.toISOString().split("T")[0]
     
     const habit = habits.find((h) => h.id === habitId);
@@ -938,6 +950,8 @@ export default function DashboardPage() {
   }
 
   const deleteHabit = async (habitId: string) => {
+    if (!supabase) return
+    
     const { error } = await supabase
       .from('habits')
       .delete()

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -14,18 +14,34 @@ export default function Signup() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
+  // Check if Supabase client is available
+  useEffect(() => {
+    if (!supabase) {
+      setError('Application configuration error. Please check environment variables.')
+    }
+  }, [supabase])
+
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!supabase) {
+      setError('Cannot connect to authentication service')
+      return
+    }
+    
     setError(null)
     setSuccess(false)
+    setIsLoading(true)
 
     const { error } = await supabase.auth.signUp({
       email,
       password,
     })
+
+    setIsLoading(false)
 
     if (error) {
       setError(error.message)
@@ -63,6 +79,7 @@ export default function Signup() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={!supabase || isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -73,11 +90,12 @@ export default function Signup() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={!supabase || isLoading}
                 />
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}
-              <Button type="submit" className="w-full">
-                Create Account
+              <Button type="submit" className="w-full" disabled={!supabase || isLoading}>
+                {isLoading ? 'Creating Account...' : 'Create Account'}
               </Button>
             </form>
           )}

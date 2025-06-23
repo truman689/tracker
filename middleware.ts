@@ -5,10 +5,10 @@ import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
 
-  // Edge-safe Supabase client (with hardcoded credentials)
+  // Edge-safe Supabase client using environment variables
   const supabase = createMiddlewareClient({ req, res }, {
-    supabaseUrl: "https://kbqvjbinilpctbnyomrd.supabase.co",
-    supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImticXZqYmluaWxwY3RibnlvbXJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2Mjc5ODgsImV4cCI6MjA2NjIwMzk4OH0.8WY7ME4CNFMnhiva3TV45tO-JeeOEnko7oihx27Ns5E"
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   })
 
   // Example: refresh session so SSR pages always have up-to-date auth
