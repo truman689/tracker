@@ -18,6 +18,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { DebugEnv } from "@/components/debug-env"
 
 type TimePeriod = "grid"
 
@@ -46,8 +47,8 @@ function calculateSprintProgress(habit: Habit): SprintProgress {
   let completed = 0
   let total = 0
   let currentStreak = 0
-  let streakBroken = false
   
+  // Count completed vs total opportunities
   for (let i = 0; i < daysElapsed; i++) {
     const date = new Date(startDate)
     date.setDate(date.getDate() + i)
@@ -60,16 +61,34 @@ function calculateSprintProgress(habit: Habit): SprintProgress {
       
       if (isCompleted) {
         completed++
-        if (!streakBroken) {
-          currentStreak++
-        }
-      } else {
-        streakBroken = true
       }
     }
   }
   
-  const percentage = total > 0 ? (completed / total) * 100 : 0
+  // Calculate current streak (consecutive scheduled days completed, working backwards from today)
+  let streakCount = 0
+  for (let i = 0; i < Math.min(daysElapsed, 90); i++) {
+    const date = new Date(today)
+    date.setDate(today.getDate() - i)
+    
+    // Only check if this date is scheduled for this habit
+    const isScheduled = isScheduledForHabit(habit, date)
+    if (isScheduled) {
+      const dateStr = date.toISOString().split('T')[0]
+      const isCompleted = habit.history[dateStr] === 'completed'
+      
+      if (isCompleted) {
+        streakCount++
+      } else {
+        // Break streak only on missed scheduled days
+        break
+      }
+    }
+    // Continue checking previous days even if current day isn't scheduled
+  }
+  
+  currentStreak = streakCount
+  const percentage = total > 0 ? Math.round((completed / total) * 100) : 0
 
   return {
     completed,
@@ -289,17 +308,17 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-600 hover:bg-green-700'
+        return 'bg-green-600 hover:bg-green-700 border border-green-700'
       case 'missed':
-        return 'bg-red-600 hover:bg-red-700'
+        return 'bg-red-600 hover:bg-red-700 border border-red-700'
       case 'available':
-        return 'bg-blue-500 hover:bg-blue-600'
+        return 'bg-blue-500 hover:bg-blue-600 border border-blue-600'
       case 'future':
-        return 'bg-white border border-gray-200 hover:bg-gray-50'
+        return 'bg-gray-300 dark:bg-gray-700 border-2 border-gray-400 dark:border-gray-600 hover:bg-gray-400 dark:hover:bg-gray-600'
       case 'not_scheduled':
-        return 'bg-gray-600'
+        return 'bg-gray-400 dark:bg-gray-600 border border-gray-500 dark:border-gray-500'
       default:
-        return 'bg-gray-600'
+        return 'bg-gray-400 dark:bg-gray-600 border border-gray-500 dark:border-gray-500'
     }
   }
 
@@ -433,8 +452,7 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                           className={cn(
                         "w-6 h-6 transition-all duration-200 flex-shrink-0 rounded-md shadow-sm",
                         getStatusColor(status),
-                        canToggle ? "hover:scale-110 cursor-pointer touch-manipulation active:scale-95" : "cursor-default",
-                        "border border-transparent hover:border-border/20"
+                        canToggle ? "hover:scale-110 cursor-pointer touch-manipulation active:scale-95" : "cursor-default"
                       )}
                       title={`${day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${habit.name} - ${status}`}
                     />
@@ -468,22 +486,28 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                   const checkDate = new Date(today)
                   checkDate.setDate(today.getDate() - i)
                   
+                  let hasScheduledHabit = false
                   let hasCompletion = false
+                  
                   habits.forEach(habit => {
                     const status = getDayStatus(habit, checkDate)
                     if (status === 'completed') hasCompletion = true
+                    if (status === 'completed' || status === 'missed') hasScheduledHabit = true
                   })
                   
-                  if (hasCompletion) {
-                    streak++
-                  } else {
-                    break
+                  // Only count days with scheduled habits
+                  if (hasScheduledHabit) {
+                    if (hasCompletion) {
+                      streak++
+                    } else {
+                      break
+                    }
                   }
                 }
                 
                 // Check if it's a personal best (simplified - assume current is best for now)
                 const isPersonalBest = streak > 7 // Placeholder logic
-                return isPersonalBest ? 'text-yellow-500' : 'text-green-700'
+                return isPersonalBest ? 'text-yellow-500 dark:text-yellow-400' : 'text-green-700 dark:text-green-400'
               })()}`}>
                 {(() => {
                   let streak = 0
@@ -494,16 +518,22 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                     const checkDate = new Date(today)
                     checkDate.setDate(today.getDate() - i)
                     
+                    let hasScheduledHabit = false
                     let hasCompletion = false
+                    
                     habits.forEach(habit => {
                       const status = getDayStatus(habit, checkDate)
                       if (status === 'completed') hasCompletion = true
+                      if (status === 'completed' || status === 'missed') hasScheduledHabit = true
                     })
                     
-                    if (hasCompletion) {
-                      streak++
-                    } else {
-                      break
+                    // Only count days with scheduled habits
+                    if (hasScheduledHabit) {
+                      if (hasCompletion) {
+                        streak++
+                      } else {
+                        break
+                      }
                     }
                   }
                   return streak
@@ -518,23 +548,21 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
           <Tooltip content="Total commits shows how many habits you've completed out of all possible opportunities during your 90-day journey. Think of each completed habit as a 'commit' to your goals!">
             <div className="bg-muted/50 rounded-lg p-4 border border-border text-center hover:shadow-md transition-shadow cursor-help">
               <div className="text-2xl font-bold text-amber-800 dark:text-amber-600">
-                {overallStats.completed}/{(() => {
-                  // Calculate total possible commits (assuming average 3 habits per day over 90 days)
-                  const totalDays = 90
-                  const avgHabitsPerDay = Math.max(habits.length, 3)
-                  return totalDays * avgHabitsPerDay
-                })()}
-            </div>
+                {overallStats.completed}/{overallStats.completed + overallStats.missed}
+              </div>
               <div className="text-xs text-muted-foreground font-medium">Total Commits</div>
               <div className="w-full bg-muted rounded-full h-2 mt-2">
                 <div 
                   className="bg-green-700 dark:bg-green-600 h-2 rounded-full transition-all duration-300"
                   style={{ 
-                    width: `${Math.min((overallStats.completed / (90 * Math.max(habits.length, 3))) * 100, 100)}%` 
+                    width: `${(() => {
+                      const total = overallStats.completed + overallStats.missed
+                      return total > 0 ? Math.min((overallStats.completed / total) * 100, 100) : 0
+                    })()}%` 
                   }}
                 ></div>
+              </div>
             </div>
-      </div>
           </Tooltip>
 
           {/* Sprint Progress */}
@@ -542,13 +570,18 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
             <div className="bg-card rounded-lg p-4 border border-border text-center hover:shadow-md transition-shadow cursor-help">
               <div className="text-2xl font-bold text-green-700 dark:text-green-400">
                 {(() => {
+                  if (habits.length === 0) return 0;
+                  
                   const today = new Date()
-                  const startDate = habits.length > 0 ? 
-                    new Date(Math.min(...habits.map(h => new Date(h.created_at).getTime()))) : 
-                    today
-                  const daysPassed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
-                  const sprintProgress = Math.min(Math.round((daysPassed / 90) * 100), 100)
-                  return sprintProgress
+                  today.setHours(0, 0, 0, 0)
+                  
+                  const startDate = new Date(Math.min(...habits.map(h => new Date(h.created_at).getTime())))
+                  startDate.setHours(0, 0, 0, 0)
+                  
+                  // Calculate days passed (including today as day 1)
+                  const daysPassed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+                  const sprintProgress = Math.min((daysPassed / 90) * 100, 100)
+                  return Math.round(sprintProgress * 10) / 10 // Round to 1 decimal place for accuracy
                 })()}%
               </div>
               <div className="text-xs text-muted-foreground font-medium">Sprint Progress</div>
@@ -557,23 +590,34 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                   className="bg-green-700 dark:bg-green-600 h-2 rounded-full transition-all duration-300"
                   style={{ 
                     width: `${(() => {
+                      if (habits.length === 0) return 0;
+                      
                       const today = new Date()
-                      const startDate = habits.length > 0 ? 
-                        new Date(Math.min(...habits.map(h => new Date(h.created_at).getTime()))) : 
-                        today
-                      const daysPassed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
-                      return Math.min((daysPassed / 90) * 100, 100)
+                      today.setHours(0, 0, 0, 0)
+                      
+                      const startDate = new Date(Math.min(...habits.map(h => new Date(h.created_at).getTime())))
+                      startDate.setHours(0, 0, 0, 0)
+                      
+                      // Calculate days passed (including today as day 1)
+                      const daysPassed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+                      const sprintProgress = Math.min((daysPassed / 90) * 100, 100)
+                      return sprintProgress // Return the actual percentage, not rounded
                     })()}%` 
                   }}
                 ></div>
                 </div>
               <div className="text-xs text-muted-foreground/80 mt-1">
                 {(() => {
+                  if (habits.length === 0) return "0/90 Days";
+                  
                   const today = new Date()
-                  const startDate = habits.length > 0 ? 
-                    new Date(Math.min(...habits.map(h => new Date(h.created_at).getTime()))) : 
-                    today
-                  const daysPassed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+                  today.setHours(0, 0, 0, 0)
+                  
+                  const startDate = new Date(Math.min(...habits.map(h => new Date(h.created_at).getTime())))
+                  startDate.setHours(0, 0, 0, 0)
+                  
+                  // Calculate days passed (including today as day 1)
+                  const daysPassed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
                   return `${Math.min(daysPassed, 90)}/90 Days`
                 })()}
                     </div>
@@ -1000,6 +1044,9 @@ export default function DashboardPage() {
       <main className="px-3 sm:px-6 py-4 sm:py-12">
         <GridView habits={habits} onToggle={toggleHabit} onAddHabit={addHabit} onDeleteHabit={deleteHabit} />
       </main>
-        </div>
-    )
+      
+      {/* Debug Component */}
+      <DebugEnv habits={habits} />
+    </div>
+  )
 }
