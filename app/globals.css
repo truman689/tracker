@@ -87,8 +87,7 @@
   }
   
   body {
-    @apply text-foreground;
-    background: #ffc0cb !important;
+    @apply text-foreground bg-background;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
@@ -129,6 +128,17 @@
 }
 
 @layer components {
+  /* Mobile-first optimizations */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .scroll-smooth {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
   /* Glass effect utility */
   .glass {
     backdrop-filter: blur(16px) saturate(180%);
@@ -185,5 +195,12 @@
   
   .animate-scale-in {
     animation: scale-in 0.3s ease-out;
+  }
+  
+  /* Shimmer animation for habit cards */
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
   }
 }

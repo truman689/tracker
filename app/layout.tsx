@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Poppins } from 'next/font/google'
+import { Inter, Poppins, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -10,9 +10,22 @@ const poppins = Poppins({
   variable: '--font-poppins',
 })
 
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-space-grotesk',
+})
+
 export const metadata: Metadata = {
-  title: '3months',
-  description: 'A 3 month journey to build better habits.',
+  title: '90days. - Build Better Habits',
+  description: 'A 3 month journey to build better habits with 90days.',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+  themeColor: '#0ea5e9',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: '90days.'
+  }
 }
 
 export default function RootLayout({
@@ -22,7 +35,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${poppins.variable} font-sans`}>{children}</body>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <meta name="theme-color" content="#0ea5e9" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="90days." />
+      </head>
+      <body className={`${inter.variable} ${poppins.variable} ${spaceGrotesk.variable} font-sans`}>{children}</body>
     </html>
   )
 }

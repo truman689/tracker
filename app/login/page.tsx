@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DebugEnv } from '@/components/debug-env'
+import { Wordmark } from '@/components/wordmark'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -50,21 +52,22 @@ export default function Login() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+      <DebugEnv />
+      <Card className="w-full max-w-sm border-0 shadow-xl">
+        <CardHeader className="pb-4">
           <div className="flex flex-col items-center mb-4">
-            <img src="/strive.png" alt="Strive" className="h-24 w-auto mb-4" />
+            <Wordmark size="lg" className="mb-4" />
           </div>
-          <CardTitle className="text-2xl text-center">Login</CardTitle>
-          <CardDescription>
-            Enter your email and password to access your Strive account.
+          <CardTitle className="text-xl sm:text-2xl text-center">Login</CardTitle>
+          <CardDescription className="text-center text-sm">
+            Enter your email and password to access your 90days. account.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-6 pb-6">
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -73,10 +76,11 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={!supabase || isLoading}
+                className="h-12 text-base border-2 focus:border-brand-500 transition-colors touch-manipulation"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -84,16 +88,25 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={!supabase || isLoading}
+                className="h-12 text-base border-2 focus:border-brand-500 transition-colors touch-manipulation"
               />
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            <Button type="submit" className="w-full" disabled={!supabase || isLoading}>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+            <Button 
+              type="submit" 
+              className="w-full h-12 text-base font-semibold bg-brand-500 hover:bg-brand-600 transition-colors touch-manipulation" 
+              disabled={!supabase || isLoading}
+            >
               {isLoading ? 'Logging in...' : 'Log In'}
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
+          <div className="mt-6 text-center text-sm text-gray-600">
             Don't have an account?{' '}
-            <Link href="/signup" className="underline">
+            <Link href="/signup" className="text-brand-600 hover:text-brand-700 font-semibold underline">
               Sign up
             </Link>
           </div>

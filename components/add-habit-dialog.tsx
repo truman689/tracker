@@ -18,17 +18,6 @@ interface AddHabitDialogProps {
   children: React.ReactNode
 }
 
-const COLORS = [
-  { name: "Ocean", value: "bg-blue-500", hex: "#3b82f6" },
-  { name: "Forest", value: "bg-green-500", hex: "#22c55e" },
-  { name: "Royal", value: "bg-purple-500", hex: "#a855f7" },
-  { name: "Sunset", value: "bg-red-500", hex: "#ef4444" },
-  { name: "Warm", value: "bg-orange-500", hex: "#f97316" },
-  { name: "Rose", value: "bg-pink-500", hex: "#ec4899" },
-  { name: "Sky", value: "bg-cyan-500", hex: "#06b6d4" },
-  { name: "Amber", value: "bg-amber-500", hex: "#f59e0b" },
-]
-
 type ScheduleType = 'every_day' | 'specific_days' | 'every_x_days';
 const WEEK_DAYS = [
   { short: 'S', full: 'Sunday', index: 0 },
@@ -42,7 +31,6 @@ const WEEK_DAYS = [
 
 export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
   const [name, setName] = useState("")
-  const [selectedColor, setSelectedColor] = useState(COLORS[0])
   const [scheduleType, setScheduleType] = useState<ScheduleType>('every_day');
   const [daysOfWeek, setDaysOfWeek] = useState<number[]>([]);
   const [interval, setInterval] = useState(2);
@@ -59,7 +47,6 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
   
   const resetForm = () => {
     setName("");
-    setSelectedColor(COLORS[0]);
     setScheduleType('every_day');
     setDaysOfWeek([]);
     setInterval(2);
@@ -102,7 +89,7 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
     try {
     await onAddHabit({
       name: name.trim(),
-        color: selectedColor.value,
+      color: "bg-neutral-500", // Default neutral color
       schedule,
     })
     resetForm();
@@ -131,16 +118,16 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
-        <form onSubmit={handleSubmit} className="space-y-5 p-1">
+      <DialogContent className="sm:max-w-md border-0 shadow-2xl bg-white/95 backdrop-blur-sm max-h-[90vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 p-1">
           <div className="text-center">
-            <div className="w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center" style={{backgroundColor: selectedColor.hex}}>
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 rounded-xl bg-neutral-500 flex items-center justify-center">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-neutral-800 mb-1">Create New Habit</h2>
-            <p className="text-sm text-neutral-500">Start your 3-month journey today</p>
+            <h2 className="text-lg sm:text-xl font-bold text-neutral-800 mb-1">Create New Habit</h2>
+            <p className="text-xs sm:text-sm text-neutral-500">Start your 3-month journey today</p>
           </div>
 
           <div className="space-y-4">
@@ -152,44 +139,11 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
               value={name}
               onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Drink 8 glasses of water"
-                className="text-center font-medium border-2 border-neutral-200 rounded-xl px-4 py-3 focus:border-brand-400 focus:ring-brand-400 transition-colors"
+                className="text-center font-medium border-2 border-neutral-200 rounded-xl px-4 py-3 h-12 text-base focus:border-brand-400 focus:ring-brand-400 transition-colors touch-manipulation"
               autoFocus
               required
             />
           </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                Choose a color theme
-              </label>
-              <div className="grid grid-cols-4 gap-2">
-            {COLORS.map((color) => (
-              <button
-                key={color.value}
-                type="button"
-                    onClick={() => setSelectedColor(color)}
-                className={cn(
-                      "relative p-2 rounded-xl transition-all duration-300 hover:scale-105",
-                      selectedColor.value === color.value 
-                        ? "ring-2 ring-neutral-300 scale-105" 
-                        : "hover:shadow-sm"
-                    )}
-                    style={{backgroundColor: color.hex}}
-                  >
-                    <div className="w-6 h-6 rounded-lg bg-white/20 mx-auto flex items-center justify-center">
-                      {selectedColor.value === color.value && (
-                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </div>
-                    <div className="text-xs text-white font-medium mt-1 text-center opacity-90">
-                      {color.name}
-                    </div>
-                  </button>
-            ))}
-          </div>
-            </div>
 
             <div>
               <label className="block text-sm font-semibold text-neutral-700 mb-2">
@@ -280,10 +234,9 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
                             className={cn(
                               "aspect-square rounded-lg text-xs font-semibold transition-all duration-200 hover:scale-105",
                               daysOfWeek.includes(day.index)
-                                ? `text-white`
+                                ? "bg-brand-500 text-white"
                                 : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                             )}
-                            style={daysOfWeek.includes(day.index) ? {backgroundColor: selectedColor.hex} : {}}
                             title={day.full}
                   >
                             {day.short}
@@ -337,11 +290,7 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
             <Button
               type="submit"
               disabled={!name.trim() || isSubmitting}
-              className="flex-1 py-2 font-semibold rounded-xl transition-all duration-200 text-sm"
-              style={{
-                backgroundColor: selectedColor.hex,
-                color: 'white'
-              }}
+              className="flex-1 py-2 font-semibold rounded-xl transition-all duration-200 text-sm bg-brand-500 hover:bg-brand-600 text-white"
             >
               {isSubmitting ? 'Creating...' : 'Create Habit'}
             </Button>
