@@ -351,18 +351,18 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
   return (
     <div className="space-y-6">
       {/* Quick Stats */}
-      <div className="flex items-center justify-center gap-12 mb-8">
+      <div className="flex items-center justify-center gap-6 sm:gap-12 mb-8">
         <div className="text-center">
-          <div className="text-3xl font-bold text-green-600 dark:text-green-400">{overallStats.completed}</div>
-          <div className="text-sm text-muted-foreground font-medium">Completed</div>
+          <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">{overallStats.completed}</div>
+          <div className="text-xs sm:text-sm text-muted-foreground font-medium">Completed</div>
         </div>
         <div className="text-center">
-          <div className="text-3xl font-bold text-red-600 dark:text-red-400">{overallStats.missed}</div>
-          <div className="text-sm text-muted-foreground font-medium">Missed</div>
+          <div className="text-2xl sm:text-3xl font-bold text-red-600 dark:text-red-400">{overallStats.missed}</div>
+          <div className="text-xs sm:text-sm text-muted-foreground font-medium">Missed</div>
         </div>
         <div className="text-center">
-          <div className="text-3xl font-bold text-foreground">{successRate}%</div>
-          <div className="text-sm text-muted-foreground font-medium">Success Rate</div>
+          <div className="text-2xl sm:text-3xl font-bold text-foreground">{successRate}%</div>
+          <div className="text-xs sm:text-sm text-muted-foreground font-medium">Success Rate</div>
         </div>
       </div>
 
@@ -377,12 +377,12 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
           </div>
           
       {/* Main Grid */}
-      <div className="bg-card rounded-3xl p-8 shadow-xl border border-border overflow-x-auto mb-12">
+      <div className="bg-card rounded-3xl p-6 sm:p-8 shadow-xl border border-border overflow-x-auto mb-12">
         <div className="font-mono min-w-max">
           {/* Week day headers */}
-          <div className="flex mb-4">
-            <div className="w-64 flex-shrink-0"></div>
-            <div className="flex">
+          <div className="flex mb-6">
+            <div className="w-40 sm:w-64 flex-shrink-0"></div>
+            <div className="flex gap-1">
             {days.map((day, index) => {
                 const isStartOfWeek = day.getDay() === 0
                 const isFirstDay = index === 0
@@ -391,7 +391,7 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
               return (
                   <div key={index} className="w-6 h-6 flex items-center justify-center">
                     {shouldShowHeader && (
-                      <span className="text-sm text-foreground font-bold">
+                      <span className="text-sm font-bold text-foreground">
                         {weekDays[day.getDay()]}
                       </span>
                     )}
@@ -403,24 +403,24 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
           
           {/* Habits and their grids */}
           {habits.map((habit) => (
-            <div key={habit.id} className="flex mb-3 group">
+            <div key={habit.id} className="flex mb-4 group">
               {/* Habit name with delete option */}
-              <div className="w-64 flex-shrink-0 pr-6 flex items-center justify-between">
-                <div className="text-base font-semibold text-foreground truncate">
+              <div className="w-40 sm:w-64 flex-shrink-0 pr-4 sm:pr-6 flex items-center justify-between">
+                <div className="text-sm sm:text-base font-semibold text-foreground truncate">
                   {habit.name}
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => onDeleteHabit(habit.id)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-2 h-auto text-destructive hover:text-destructive/80"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 sm:p-2 h-auto text-destructive hover:text-destructive/80"
                 >
                   <X className="h-4 w-4" />
                 </Button>
                   </div>
               
-              {/* Day squares - touching like GitHub */}
-              <div className="flex">
+              {/* Day squares - more prominent on mobile */}
+              <div className="flex gap-1">
                 {days.map((day, dayIndex) => {
                   const status = getDayStatus(habit, day)
                   const canToggle = status === 'available' || status === 'completed' || status === 'missed'
@@ -431,9 +431,10 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                       onClick={() => canToggle && onToggle(habit.id, day)}
                       disabled={!canToggle}
                           className={cn(
-                        "w-6 h-6 transition-all duration-200 flex-shrink-0",
+                        "w-6 h-6 transition-all duration-200 flex-shrink-0 rounded-md shadow-sm",
                         getStatusColor(status),
-                        canToggle ? "hover:scale-110 cursor-pointer" : "cursor-default"
+                        canToggle ? "hover:scale-110 cursor-pointer touch-manipulation active:scale-95" : "cursor-default",
+                        "border border-transparent hover:border-border/20"
                       )}
                       title={`${day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${habit.name} - ${status}`}
                     />
@@ -453,7 +454,7 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
       </div>
 
         {/* Overall Performance Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           {/* Current Streak */}
           <Tooltip content="Your current streak counts how many days in a row you've completed at least one habit. The longer your streak, the stronger your momentum becomes!">
             <div className="bg-card rounded-lg p-4 border border-border text-center hover:shadow-md transition-shadow cursor-help">
@@ -708,38 +709,40 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                 })()
 
   return (
-                  <div key={habit.id} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                    <div className="flex-1">
-                      <div className="font-medium text-foreground">{habit.name}</div>
-                      <div className="text-sm text-muted-foreground capitalize">
-                        {habit.schedule.type === 'every_day' ? 'Daily' : 
-                         habit.schedule.type === 'specific_days' ? `${habit.schedule.days.length} days/week` :
-                         `Every ${habit.schedule.interval} days`}
-      </div>
-            </div>
-                    <div className="grid grid-cols-5 gap-4 text-center">
-                      <div>
-                        <div className="text-lg font-bold text-green-600 dark:text-green-400">{habitStats.completed}</div>
-                        <div className="text-xs text-muted-foreground">Done</div>
-            </div>
-                      <div>
-                        <div className="text-lg font-bold text-red-600 dark:text-red-400">{habitStats.missed}</div>
-                        <div className="text-xs text-muted-foreground">Missed</div>
-            </div>
-                      <div>
-                        <div className="text-lg font-bold text-foreground">{habitSuccessRate}%</div>
-                        <div className="text-xs text-muted-foreground">Success</div>
-            </div>
-                      <div>
-                        <div className="text-lg font-bold text-orange-600 dark:text-orange-400">{currentStreak}</div>
-                        <div className="text-xs text-muted-foreground">Current</div>
-      </div>
-                      <div>
-                        <div className="text-lg font-bold text-purple-600 dark:text-purple-400">{longestStreak}</div>
-                        <div className="text-xs text-muted-foreground">Best</div>
+                  <div key={habit.id} className="p-3 sm:p-4 bg-muted/50 rounded-lg">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-foreground truncate">{habit.name}</div>
+                        <div className="text-sm text-muted-foreground capitalize">
+                          {habit.schedule.type === 'every_day' ? 'Daily' : 
+                           habit.schedule.type === 'specific_days' ? `${habit.schedule.days.length} days/week` :
+                           `Every ${habit.schedule.interval} days`}
+        </div>
+              </div>
+                      <div className="grid grid-cols-5 gap-2 sm:gap-4 text-center">
+                        <div>
+                          <div className="text-sm sm:text-lg font-bold text-green-600 dark:text-green-400">{habitStats.completed}</div>
+                          <div className="text-xs text-muted-foreground">Done</div>
+              </div>
+                        <div>
+                          <div className="text-sm sm:text-lg font-bold text-red-600 dark:text-red-400">{habitStats.missed}</div>
+                          <div className="text-xs text-muted-foreground">Missed</div>
+              </div>
+                        <div>
+                          <div className="text-sm sm:text-lg font-bold text-foreground">{habitSuccessRate}%</div>
+                          <div className="text-xs text-muted-foreground">Success</div>
+              </div>
+                        <div>
+                          <div className="text-sm sm:text-lg font-bold text-orange-600 dark:text-orange-400">{currentStreak}</div>
+                          <div className="text-xs text-muted-foreground">Current</div>
+        </div>
+                        <div>
+                          <div className="text-sm sm:text-lg font-bold text-purple-600 dark:text-purple-400">{longestStreak}</div>
+                          <div className="text-xs text-muted-foreground">Best</div>
+                    </div>
                   </div>
-                </div>
-                  </div>
+                    </div>
+                    </div>
                 )
             })}
           </div>
@@ -962,7 +965,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
       {/* Header */}
       <header className="bg-background/90 backdrop-blur-md border-b border-border/60 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Wordmark size="md" />
@@ -972,7 +975,7 @@ export default function DashboardPage() {
                 <ThemeToggle />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="w-8 h-8 bg-muted rounded-full flex items-center justify-center hover:bg-muted/80 transition-colors">
+                    <button className="w-7 h-7 sm:w-8 sm:h-8 bg-muted rounded-full flex items-center justify-center hover:bg-muted/80 transition-colors">
                       <span className="text-xs font-semibold text-muted-foreground">
                         {session.user.email?.[0]?.toUpperCase()}
                       </span>
@@ -994,7 +997,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 sm:px-6 py-6 sm:py-12">
+      <main className="px-3 sm:px-6 py-4 sm:py-12">
         <GridView habits={habits} onToggle={toggleHabit} onAddHabit={addHabit} onDeleteHabit={deleteHabit} />
       </main>
         </div>

@@ -118,8 +118,8 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md border-0 shadow-2xl bg-white/95 backdrop-blur-sm max-h-[90vh] overflow-y-auto">
-        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 p-1">
+      <DialogContent className="sm:max-w-md border-0 shadow-2xl bg-white/95 backdrop-blur-sm max-h-[95vh] overflow-y-auto w-[95vw] sm:w-full mx-auto">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 p-2 sm:p-1">
           <div className="text-center">
             <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 rounded-xl bg-neutral-500 flex items-center justify-center">
               <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -132,43 +132,43 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
 
           <div className="space-y-4">
           <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">
+              <label className="block text-sm font-semibold text-neutral-700 mb-3">
                 What habit do you want to build?
               </label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Drink 8 glasses of water"
-                className="text-center font-medium border-2 border-neutral-200 rounded-xl px-4 py-3 h-12 text-base focus:border-brand-400 focus:ring-brand-400 transition-colors touch-manipulation"
+                className="text-center font-medium border-2 border-neutral-200 rounded-xl px-4 py-4 h-14 text-base focus:border-brand-400 focus:ring-brand-400 transition-colors touch-manipulation"
               autoFocus
               required
             />
           </div>
 
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">
+              <label className="block text-sm font-semibold text-neutral-700 mb-3">
                 How often do you want to do this?
               </label>
               
-              <div className="space-y-2">
-                <div className="grid grid-cols-1 gap-2">
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 gap-3">
                   <button
                     type="button"
                     onClick={() => setScheduleType('every_day')}
                     className={cn(
-                      "flex items-center justify-between p-3 rounded-xl border-2 transition-all duration-200",
+                      "flex items-center justify-between p-4 sm:p-3 rounded-xl border-2 transition-all duration-200 touch-manipulation min-h-[60px]",
                       scheduleType === 'every_day'
                         ? "border-brand-400 bg-brand-50 text-brand-700"
                         : "border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50"
                     )}
                   >
                     <div className="text-left">
-                      <div className="font-semibold text-sm">Every Day</div>
-                      <div className="text-xs opacity-70">Build a daily routine</div>
+                      <div className="font-semibold text-base sm:text-sm">Every Day</div>
+                      <div className="text-sm sm:text-xs opacity-70">Build a daily routine</div>
                     </div>
                     {scheduleType === 'every_day' && (
-                      <div className="w-5 h-5 rounded-full bg-brand-500 flex items-center justify-center">
-                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="w-6 h-6 sm:w-5 sm:h-5 rounded-full bg-brand-500 flex items-center justify-center">
+                        <svg className="w-4 h-4 sm:w-3 sm:h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
@@ -179,19 +179,19 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
                     type="button"
                     onClick={() => setScheduleType('specific_days')}
                     className={cn(
-                      "flex items-center justify-between p-3 rounded-xl border-2 transition-all duration-200",
+                      "flex items-center justify-between p-4 sm:p-3 rounded-xl border-2 transition-all duration-200 touch-manipulation min-h-[60px]",
                       scheduleType === 'specific_days'
                         ? "border-brand-400 bg-brand-50 text-brand-700"
                         : "border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50"
                     )}
                   >
                     <div className="text-left">
-                      <div className="font-semibold text-sm">Specific Days</div>
-                      <div className="text-xs opacity-70">Choose which days of the week</div>
+                      <div className="font-semibold text-base sm:text-sm">Specific Days</div>
+                      <div className="text-sm sm:text-xs opacity-70">Choose which days of the week</div>
                     </div>
                     {scheduleType === 'specific_days' && (
-                      <div className="w-5 h-5 rounded-full bg-brand-500 flex items-center justify-center">
-                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="w-6 h-6 sm:w-5 sm:h-5 rounded-full bg-brand-500 flex items-center justify-center">
+                        <svg className="w-4 h-4 sm:w-3 sm:h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
@@ -202,19 +202,19 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
                     type="button"
                     onClick={() => setScheduleType('every_x_days')}
                     className={cn(
-                      "flex items-center justify-between p-3 rounded-xl border-2 transition-all duration-200",
+                      "flex items-center justify-between p-4 sm:p-3 rounded-xl border-2 transition-all duration-200 touch-manipulation min-h-[60px]",
                       scheduleType === 'every_x_days'
                         ? "border-brand-400 bg-brand-50 text-brand-700"
                         : "border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50"
                     )}
                   >
                     <div className="text-left">
-                      <div className="font-semibold text-sm">Every X Days</div>
-                      <div className="text-xs opacity-70">Set a custom interval</div>
+                      <div className="font-semibold text-base sm:text-sm">Every X Days</div>
+                      <div className="text-sm sm:text-xs opacity-70">Set a custom interval</div>
                     </div>
                     {scheduleType === 'every_x_days' && (
-                      <div className="w-5 h-5 rounded-full bg-brand-500 flex items-center justify-center">
-                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="w-6 h-6 sm:w-5 sm:h-5 rounded-full bg-brand-500 flex items-center justify-center">
+                        <svg className="w-4 h-4 sm:w-3 sm:h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
@@ -224,15 +224,15 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
 
             {scheduleType === 'specific_days' && (
                   <Card className="border border-neutral-200">
-                    <CardContent className="p-3">
-                      <div className="grid grid-cols-7 gap-1">
+                    <CardContent className="p-4 sm:p-3">
+                      <div className="grid grid-cols-7 gap-2 sm:gap-1">
                         {WEEK_DAYS.map((day) => (
                           <button
                             key={day.index}
                     type="button"
                             onClick={() => handleDayToggle(day.index)}
                             className={cn(
-                              "aspect-square rounded-lg text-xs font-semibold transition-all duration-200 hover:scale-105",
+                              "aspect-square rounded-lg text-sm sm:text-xs font-semibold transition-all duration-200 hover:scale-105 touch-manipulation min-h-[44px] sm:min-h-[36px]",
                               daysOfWeek.includes(day.index)
                                 ? "bg-brand-500 text-white"
                                 : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
@@ -249,17 +249,17 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
 
             {scheduleType === 'every_x_days' && (
                   <Card className="border border-neutral-200">
-                    <CardContent className="p-3">
-                      <div className="flex items-center justify-center gap-3">
-                        <span className="text-sm text-neutral-600 font-medium">Every</span>
+                    <CardContent className="p-4 sm:p-3">
+                      <div className="flex items-center justify-center gap-4 sm:gap-3">
+                        <span className="text-base sm:text-sm text-neutral-600 font-medium">Every</span>
                     <Input 
                         type="number" 
                         value={interval}
                           onChange={e => setInterval(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                          className="w-16 text-center font-semibold border rounded-lg"
+                          className="w-20 sm:w-16 text-center font-semibold border rounded-lg h-12 sm:h-10 text-base sm:text-sm touch-manipulation"
                         min="1"
                     />
-                        <span className="text-sm text-neutral-600 font-medium">days</span>
+                        <span className="text-base sm:text-sm text-neutral-600 font-medium">days</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -277,12 +277,12 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
             </div>
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-3 pt-4 sm:pt-2">
             <Button
               type="button"
               variant="ghost"
               onClick={() => setOpen(false)}
-              className="flex-1 py-2 font-semibold text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 rounded-xl text-sm"
+              className="flex-1 py-3 sm:py-2 font-semibold text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 rounded-xl text-base sm:text-sm touch-manipulation h-12 sm:h-auto"
               disabled={isSubmitting}
             >
               Cancel
@@ -290,7 +290,7 @@ export function AddHabitDialog({ onAddHabit, children }: AddHabitDialogProps) {
             <Button
               type="submit"
               disabled={!name.trim() || isSubmitting}
-              className="flex-1 py-2 font-semibold rounded-xl transition-all duration-200 text-sm bg-brand-500 hover:bg-brand-600 text-white"
+              className="flex-1 py-3 sm:py-2 font-semibold rounded-xl transition-all duration-200 text-base sm:text-sm bg-brand-500 hover:bg-brand-600 text-white touch-manipulation h-12 sm:h-auto"
             >
               {isSubmitting ? 'Creating...' : 'Create Habit'}
             </Button>
