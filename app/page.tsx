@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { AddHabitDialog } from "@/components/add-habit-dialog"
 import { HabitCard } from "@/components/habit-card"
 import { Wordmark } from "@/components/wordmark"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 import { createClient } from "@/lib/supabase"
 import Link from 'next/link'
@@ -138,7 +139,7 @@ function DashboardHabitCard({ habit, selectedDate, onToggle, onDelete }: {
   const scheduled = isScheduledForDate(selectedDate);
 
   return (
-    <Card className="group cursor-pointer transition-all duration-300 hover:shadow-lg border-0 bg-white shadow-md">
+    <Card className="group cursor-pointer transition-all duration-300 hover:shadow-lg border-0 bg-card shadow-md hover:shadow-card-hover">
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3 sm:gap-4 flex-1">
@@ -150,26 +151,26 @@ function DashboardHabitCard({ habit, selectedDate, onToggle, onDelete }: {
                 scheduled && !isFuture ? (
                   isCompleted
                     ? "bg-green-500 border-green-500 shadow-lg"
-                    : "bg-white border-neutral-300 hover:border-neutral-400"
-                ) : "bg-white border-neutral-200 opacity-50 cursor-not-allowed"
+                    : "bg-background border-border hover:border-ring"
+                ) : "bg-background border-border/50 opacity-50 cursor-not-allowed"
               )}
             >
               {/* Empty content - the visual is handled by background colors */}
             </button>
             <div className="flex-1 min-w-0">
-              <h3 className="text-base sm:text-lg font-semibold text-neutral-800 truncate pr-2">{habit.name}</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-foreground truncate pr-2">{habit.name}</h3>
               <div className="flex items-center gap-2 sm:gap-3 mt-1 flex-wrap">
                 {scheduled ? (
-                  <Badge variant="secondary" className="bg-brand-100 text-brand-700 text-xs">
+                  <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
                     {isToday ? 'Scheduled Today' : isFuture ? 'Scheduled' : 'Was Scheduled'}
                   </Badge>
                 ) : (
-                  <Badge variant="secondary" className="bg-neutral-100 text-neutral-500 text-xs">
+                  <Badge variant="secondary" className="bg-muted text-muted-foreground text-xs">
                     Not Scheduled
                   </Badge>
                 )}
                 {stats.currentStreak > 0 && (
-                  <div className="flex items-center gap-1 text-orange-500">
+                  <div className="flex items-center gap-1 text-orange-500 dark:text-orange-400">
                     <Flame className="w-3 h-3 sm:w-4 sm:h-4" />
                     <span className="text-xs sm:text-sm font-semibold">{stats.currentStreak}</span>
                   </div>
@@ -195,13 +196,13 @@ function DashboardHabitCard({ habit, selectedDate, onToggle, onDelete }: {
         
         {/* Sprint Progress for Mobile */}
         <div className="block sm:hidden">
-          <div className="bg-neutral-50 rounded-lg p-3 space-y-2">
+          <div className="bg-muted/50 rounded-lg p-3 space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-neutral-600">Sprint Progress</span>
-              <span className="text-xs font-bold text-neutral-800">{stats.percentage}%</span>
+              <span className="text-xs font-medium text-muted-foreground">Sprint Progress</span>
+              <span className="text-xs font-bold text-foreground">{stats.percentage}%</span>
             </div>
             <Progress value={stats.percentage} className="h-2" />
-            <div className="flex justify-between text-xs text-neutral-500">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>{stats.completed} completed</span>
               <span>{stats.daysLeft} days left</span>
             </div>
@@ -212,13 +213,13 @@ function DashboardHabitCard({ habit, selectedDate, onToggle, onDelete }: {
         <div className="hidden sm:block">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-neutral-600">Sprint Progress</span>
+              <span className="text-sm font-medium text-muted-foreground">Sprint Progress</span>
               <Badge variant="outline" className="text-xs">{stats.percentage}%</Badge>
             </div>
-            <div className="text-xs text-neutral-500">{stats.completed}/{stats.total} completed</div>
+            <div className="text-xs text-muted-foreground">{stats.completed}/{stats.total} completed</div>
           </div>
           <Progress value={stats.percentage} className="h-2 mb-2" />
-          <div className="flex justify-between text-xs text-neutral-500">
+          <div className="flex justify-between text-xs text-muted-foreground">
             <span>{stats.daysLeft} days remaining</span>
             <span>{stats.currentStreak > 0 ? `${stats.currentStreak} day streak` : 'No current streak'}</span>
           </div>
@@ -322,20 +323,20 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
       <div className="space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-neutral-800 mb-2 font-space-grotesk">90days.</h1>
-          <p className="text-neutral-500">Build lasting habits with the power of consistency</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2 font-space-grotesk">90days.</h1>
+          <p className="text-muted-foreground">Build lasting habits with the power of consistency</p>
                 </div>
 
         {/* Empty State */}
         <div className="text-center py-20">
           <div className="relative">
-            <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-brand-100 to-brand-200 rounded-3xl flex items-center justify-center shadow-lg">
-              <Target className="w-16 h-16 text-brand-600" />
+            <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl flex items-center justify-center shadow-lg">
+              <Target className="w-16 h-16 text-primary" />
                 </div>
-            <div className="absolute -top-2 -right-2 w-8 h-8 bg-orange-400 rounded-full animate-bounce" />
+            <div className="absolute -top-2 -right-2 w-8 h-8 bg-orange-400 dark:bg-orange-500 rounded-full animate-bounce" />
       </div>
-          <h3 className="text-2xl font-bold text-neutral-800 mb-3 font-space-grotesk">Start Your 90-Day Journey</h3>
-          <p className="text-neutral-500 mb-8 max-w-md mx-auto">Create your first habit and watch your progress unfold in a beautiful grid view.</p>
+          <h3 className="text-2xl font-bold text-foreground mb-3 font-space-grotesk">Start Your 90-Day Journey</h3>
+          <p className="text-muted-foreground mb-8 max-w-md mx-auto">Create your first habit and watch your progress unfold in a beautiful grid view.</p>
           <AddHabitDialog onAddHabit={onAddHabit}>
             <Button className="btn-primary text-lg px-8 py-4 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95">
               <Plus className="mr-2 h-6 w-6" />
@@ -352,16 +353,16 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
       {/* Quick Stats */}
       <div className="flex items-center justify-center gap-12 mb-8">
         <div className="text-center">
-          <div className="text-3xl font-bold text-green-600">{overallStats.completed}</div>
-          <div className="text-sm text-neutral-500 font-medium">Completed</div>
+          <div className="text-3xl font-bold text-green-600 dark:text-green-400">{overallStats.completed}</div>
+          <div className="text-sm text-muted-foreground font-medium">Completed</div>
         </div>
         <div className="text-center">
-          <div className="text-3xl font-bold text-red-600">{overallStats.missed}</div>
-          <div className="text-sm text-neutral-500 font-medium">Missed</div>
+          <div className="text-3xl font-bold text-red-600 dark:text-red-400">{overallStats.missed}</div>
+          <div className="text-sm text-muted-foreground font-medium">Missed</div>
         </div>
         <div className="text-center">
-          <div className="text-3xl font-bold text-neutral-700">{successRate}%</div>
-          <div className="text-sm text-neutral-500 font-medium">Success Rate</div>
+          <div className="text-3xl font-bold text-foreground">{successRate}%</div>
+          <div className="text-sm text-muted-foreground font-medium">Success Rate</div>
         </div>
       </div>
 
@@ -376,7 +377,7 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
           </div>
           
       {/* Main Grid */}
-      <div className="bg-white rounded-3xl p-8 shadow-xl border border-neutral-200 overflow-x-auto mb-12">
+      <div className="bg-card rounded-3xl p-8 shadow-xl border border-border overflow-x-auto mb-12">
         <div className="font-mono min-w-max">
           {/* Week day headers */}
           <div className="flex mb-4">
@@ -390,7 +391,7 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
               return (
                   <div key={index} className="w-6 h-6 flex items-center justify-center">
                     {shouldShowHeader && (
-                      <span className="text-sm text-neutral-700 font-bold">
+                      <span className="text-sm text-foreground font-bold">
                         {weekDays[day.getDay()]}
                       </span>
                     )}
@@ -405,14 +406,14 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
             <div key={habit.id} className="flex mb-3 group">
               {/* Habit name with delete option */}
               <div className="w-64 flex-shrink-0 pr-6 flex items-center justify-between">
-                <div className="text-base font-semibold text-neutral-800 truncate">
+                <div className="text-base font-semibold text-foreground truncate">
                   {habit.name}
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => onDeleteHabit(habit.id)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-2 h-auto text-red-500 hover:text-red-700"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-2 h-auto text-destructive hover:text-destructive/80"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -447,15 +448,15 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
       {/* Detailed Stats Section */}
     <div className="space-y-6">
       <div className="text-center">
-          <h2 className="text-xl font-bold text-neutral-800 mb-2">Analytics & Insights</h2>
-          <p className="text-sm text-neutral-500">Detailed breakdown of your habit performance</p>
+          <h2 className="text-xl font-bold text-foreground mb-2">Analytics & Insights</h2>
+          <p className="text-sm text-muted-foreground">Detailed breakdown of your habit performance</p>
       </div>
 
         {/* Overall Performance Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {/* Current Streak */}
           <Tooltip content="Your current streak counts how many days in a row you've completed at least one habit. The longer your streak, the stronger your momentum becomes!">
-            <div className="bg-white rounded-lg p-4 border border-neutral-200 text-center hover:shadow-md transition-shadow cursor-help">
+            <div className="bg-card rounded-lg p-4 border border-border text-center hover:shadow-md transition-shadow cursor-help">
               <div className={`text-2xl font-bold ${(() => {
                 // Calculate current streak (consecutive days with at least one completion)
                 let streak = 0
@@ -507,15 +508,15 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                   return streak
                 })()}
             </div>
-              <div className="text-xs text-neutral-600 font-medium">Current Streak</div>
-              <div className="text-xs text-neutral-500">Consecutive Days</div>
+              <div className="text-xs text-muted-foreground font-medium">Current Streak</div>
+              <div className="text-xs text-muted-foreground/80">Consecutive Days</div>
             </div>
           </Tooltip>
 
           {/* Total Commits */}
           <Tooltip content="Total commits shows how many habits you've completed out of all possible opportunities during your 90-day journey. Think of each completed habit as a 'commit' to your goals!">
-            <div className="bg-neutral-50 rounded-lg p-4 border border-neutral-200 text-center hover:shadow-md transition-shadow cursor-help">
-              <div className="text-2xl font-bold text-amber-800">
+            <div className="bg-muted/50 rounded-lg p-4 border border-border text-center hover:shadow-md transition-shadow cursor-help">
+              <div className="text-2xl font-bold text-amber-800 dark:text-amber-600">
                 {overallStats.completed}/{(() => {
                   // Calculate total possible commits (assuming average 3 habits per day over 90 days)
                   const totalDays = 90
@@ -523,10 +524,10 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                   return totalDays * avgHabitsPerDay
                 })()}
             </div>
-              <div className="text-xs text-neutral-600 font-medium">Total Commits</div>
-              <div className="w-full bg-neutral-200 rounded-full h-2 mt-2">
+              <div className="text-xs text-muted-foreground font-medium">Total Commits</div>
+              <div className="w-full bg-muted rounded-full h-2 mt-2">
                 <div 
-                  className="bg-green-700 h-2 rounded-full transition-all duration-300"
+                  className="bg-green-700 dark:bg-green-600 h-2 rounded-full transition-all duration-300"
                   style={{ 
                     width: `${Math.min((overallStats.completed / (90 * Math.max(habits.length, 3))) * 100, 100)}%` 
                   }}
@@ -537,8 +538,8 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
 
           {/* Sprint Progress */}
           <Tooltip content="Sprint progress shows how far you are through your 90-day habit journey. Breaking it into a percentage makes the big goal feel more manageable and shows your momentum!">
-            <div className="bg-white rounded-lg p-4 border border-neutral-200 text-center hover:shadow-md transition-shadow cursor-help">
-              <div className="text-2xl font-bold text-green-700">
+            <div className="bg-card rounded-lg p-4 border border-border text-center hover:shadow-md transition-shadow cursor-help">
+              <div className="text-2xl font-bold text-green-700 dark:text-green-400">
                 {(() => {
                   const today = new Date()
                   const startDate = habits.length > 0 ? 
@@ -549,10 +550,10 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                   return sprintProgress
                 })()}%
               </div>
-              <div className="text-xs text-neutral-600 font-medium">Sprint Progress</div>
-              <div className="w-full bg-green-100 rounded-full h-2 mt-2">
+              <div className="text-xs text-muted-foreground font-medium">Sprint Progress</div>
+              <div className="w-full bg-green-100 dark:bg-green-900/30 rounded-full h-2 mt-2">
                 <div 
-                  className="bg-green-700 h-2 rounded-full transition-all duration-300"
+                  className="bg-green-700 dark:bg-green-600 h-2 rounded-full transition-all duration-300"
                   style={{ 
                     width: `${(() => {
                       const today = new Date()
@@ -565,7 +566,7 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                   }}
                 ></div>
                 </div>
-              <div className="text-xs text-neutral-500 mt-1">
+              <div className="text-xs text-muted-foreground/80 mt-1">
                 {(() => {
                   const today = new Date()
                   const startDate = habits.length > 0 ? 
@@ -580,8 +581,8 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
 
           {/* Weekly Commitment Rate */}
           <Tooltip content="Weekly commitment rate shows what percentage of your habits you completed this week. The colored squares show each day: green = completed habits, red = missed habits, gray = no habits scheduled.">
-            <div className="bg-white rounded-lg p-4 border border-neutral-200 text-center hover:shadow-md transition-shadow cursor-help">
-              <div className="text-2xl font-bold text-amber-800">
+            <div className="bg-card rounded-lg p-4 border border-border text-center hover:shadow-md transition-shadow cursor-help">
+              <div className="text-2xl font-bold text-amber-800 dark:text-amber-600">
                 {(() => {
                   const last7Days = days.slice(-7)
                   const weekStats = last7Days.reduce((acc, day) => {
@@ -597,7 +598,7 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                   return total > 0 ? Math.round((weekStats.completed / total) * 100) : 0
                 })()}%
                     </div>
-              <div className="text-xs text-neutral-600 font-medium">This Week</div>
+              <div className="text-xs text-muted-foreground font-medium">This Week</div>
               <div className="flex justify-center gap-1 mt-2">
                 {days.slice(-7).map((day, index) => {
                   let hasCompletion = false
@@ -612,7 +613,7 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                     <div
                       key={index}
                       className={`w-3 h-3 rounded-sm ${
-                        hasCompletion ? 'bg-green-500' : hasMissed ? 'bg-red-500' : 'bg-gray-200'
+                        hasCompletion ? 'bg-green-500 dark:bg-green-400' : hasMissed ? 'bg-red-500 dark:bg-red-400' : 'bg-muted'
                       }`}
                     ></div>
                   )
@@ -623,8 +624,8 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
 
           {/* Missed Days Ratio */}
           <Tooltip content="Missed days ratio shows how many habit opportunities you've missed out of your total opportunities. Don't worry - this helps you learn your patterns, not judge yourself!">
-            <div className="bg-white rounded-lg p-4 border border-neutral-200 text-center hover:shadow-md transition-shadow cursor-help">
-              <div className="text-2xl font-bold text-gray-500">
+            <div className="bg-card rounded-lg p-4 border border-border text-center hover:shadow-md transition-shadow cursor-help">
+              <div className="text-2xl font-bold text-gray-500 dark:text-gray-400">
                 {(() => {
                   const totalOpportunities = overallStats.completed + overallStats.missed
                   const missedRatio = totalOpportunities > 0 ? 
@@ -632,7 +633,7 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                   return `${overallStats.missed}/${Math.floor(totalOpportunities)} (${missedRatio}%)`
                 })()}
                   </div>
-              <div className="text-xs text-neutral-600 font-medium">Missed Days</div>
+              <div className="text-xs text-muted-foreground font-medium">Missed Days</div>
               {(() => {
                 const totalOpportunities = overallStats.completed + overallStats.missed
                 const missedRatio = totalOpportunities > 0 ? 
@@ -640,12 +641,12 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                 
                 if (missedRatio > 20) {
                   return (
-                    <div className="text-xs text-amber-600 mt-1 font-medium">
+                    <div className="text-xs text-amber-600 dark:text-amber-500 mt-1 font-medium">
                       Try a catch-up task?
                 </div>
                   )
                 }
-                return <div className="text-xs text-neutral-500 mt-1">On track!</div>
+                return <div className="text-xs text-muted-foreground/80 mt-1">On track!</div>
               })()}
       </div>
           </Tooltip>
@@ -653,8 +654,8 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
 
         {/* Individual Habit Stats */}
         {habits.length > 0 && (
-          <div className="bg-white rounded-lg p-6 border border-neutral-200">
-            <h3 className="text-lg font-semibold text-neutral-800 mb-4">Habit Performance</h3>
+          <div className="bg-card rounded-lg p-6 border border-border">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Habit Performance</h3>
             <div className="space-y-4">
               {habits.map((habit) => {
                 const habitStats = days.reduce((acc, day) => {
@@ -707,10 +708,10 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
                 })()
 
   return (
-                  <div key={habit.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div key={habit.id} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
                     <div className="flex-1">
-                      <div className="font-medium text-neutral-800">{habit.name}</div>
-                      <div className="text-sm text-neutral-500 capitalize">
+                      <div className="font-medium text-foreground">{habit.name}</div>
+                      <div className="text-sm text-muted-foreground capitalize">
                         {habit.schedule.type === 'every_day' ? 'Daily' : 
                          habit.schedule.type === 'specific_days' ? `${habit.schedule.days.length} days/week` :
                          `Every ${habit.schedule.interval} days`}
@@ -718,24 +719,24 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
             </div>
                     <div className="grid grid-cols-5 gap-4 text-center">
                       <div>
-                        <div className="text-lg font-bold text-green-600">{habitStats.completed}</div>
-                        <div className="text-xs text-neutral-500">Done</div>
+                        <div className="text-lg font-bold text-green-600 dark:text-green-400">{habitStats.completed}</div>
+                        <div className="text-xs text-muted-foreground">Done</div>
             </div>
                       <div>
-                        <div className="text-lg font-bold text-red-600">{habitStats.missed}</div>
-                        <div className="text-xs text-neutral-500">Missed</div>
+                        <div className="text-lg font-bold text-red-600 dark:text-red-400">{habitStats.missed}</div>
+                        <div className="text-xs text-muted-foreground">Missed</div>
             </div>
                       <div>
-                        <div className="text-lg font-bold text-neutral-700">{habitSuccessRate}%</div>
-                        <div className="text-xs text-neutral-500">Success</div>
+                        <div className="text-lg font-bold text-foreground">{habitSuccessRate}%</div>
+                        <div className="text-xs text-muted-foreground">Success</div>
             </div>
                       <div>
-                        <div className="text-lg font-bold text-orange-600">{currentStreak}</div>
-                        <div className="text-xs text-neutral-500">Current</div>
+                        <div className="text-lg font-bold text-orange-600 dark:text-orange-400">{currentStreak}</div>
+                        <div className="text-xs text-muted-foreground">Current</div>
       </div>
                       <div>
-                        <div className="text-lg font-bold text-purple-600">{longestStreak}</div>
-                        <div className="text-xs text-neutral-500">Best</div>
+                        <div className="text-lg font-bold text-purple-600 dark:text-purple-400">{longestStreak}</div>
+                        <div className="text-xs text-muted-foreground">Best</div>
                   </div>
                 </div>
                   </div>
@@ -746,8 +747,8 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
         )}
 
         {/* Weekly Breakdown */}
-        <div className="bg-white rounded-lg p-6 border border-neutral-200">
-          <h3 className="text-lg font-semibold text-neutral-800 mb-4">Weekly Performance</h3>
+        <div className="bg-card rounded-lg p-6 border border-border">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Weekly Performance</h3>
           <div className="grid grid-cols-7 gap-2">
             {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((dayName, dayIndex) => {
               const dayStats = days.reduce((acc, day) => {
@@ -765,10 +766,10 @@ const GridView = ({ habits, onToggle, onAddHabit, onDeleteHabit }: {
               const daySuccessRate = dayTotal > 0 ? Math.round((dayStats.completed / dayTotal) * 100) : 0
 
           return (
-                <div key={dayIndex} className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-sm font-medium text-neutral-700">{dayName.slice(0, 3)}</div>
-                  <div className="text-lg font-bold text-neutral-800 mt-1">{daySuccessRate}%</div>
-                  <div className="text-xs text-neutral-500">{dayStats.completed}/{dayTotal}</div>
+                <div key={dayIndex} className="text-center p-3 bg-muted/50 rounded-lg">
+                  <div className="text-sm font-medium text-foreground">{dayName.slice(0, 3)}</div>
+                  <div className="text-lg font-bold text-foreground mt-1">{daySuccessRate}%</div>
+                  <div className="text-xs text-muted-foreground">{dayStats.completed}/{dayTotal}</div>
                 </div>
               )
             })}
@@ -791,9 +792,9 @@ const Tooltip = ({ children, content }: { children: React.ReactNode; content: st
     >
       {children}
       {isVisible && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg z-50 max-w-xs text-center">
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-popover text-popover-foreground text-sm rounded-lg shadow-lg z-50 max-w-xs text-center border border-border">
           {content}
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-popover"></div>
         </div>
       )}
     </div>
@@ -943,14 +944,14 @@ export default function DashboardPage() {
 
     if (isLoading || !session) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{backgroundColor: '#e2e8f0'}}>
-        <Card className="bg-white shadow-xl border-0 max-w-md w-full">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
+        <Card className="bg-card shadow-xl border-0 max-w-md w-full">
           <CardContent className="p-8 text-center">
             <div className="w-96 h-48 mx-auto mb-6 flex items-center justify-center">
               <Wordmark size="xl" />
             </div>
-            <h2 className="text-2xl font-semibold text-neutral-900 mb-2 tracking-tight">Loading...</h2>
-            <p className="text-neutral-500 mb-6">Please wait while we redirect you to login</p>
+            <h2 className="text-2xl font-semibold text-foreground mb-2 tracking-tight">Loading...</h2>
+            <p className="text-muted-foreground mb-6">Please wait while we redirect you to login</p>
           </CardContent>
         </Card>
       </div>
@@ -958,9 +959,9 @@ export default function DashboardPage() {
   }
 
     return (
-    <div className="min-h-screen" style={{backgroundColor: '#e2e8f0'}}>
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white/90 backdrop-blur-md border-b border-neutral-200/60 sticky top-0 z-50">
+      <header className="bg-background/90 backdrop-blur-md border-b border-border/60 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -968,10 +969,11 @@ export default function DashboardPage() {
               </div>
               
               <div className="flex items-center gap-2 sm:gap-3">
+                <ThemeToggle />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-neutral-300 transition-colors">
-                      <span className="text-xs font-semibold text-neutral-600">
+                    <button className="w-8 h-8 bg-muted rounded-full flex items-center justify-center hover:bg-muted/80 transition-colors">
+                      <span className="text-xs font-semibold text-muted-foreground">
                         {session.user.email?.[0]?.toUpperCase()}
                       </span>
                     </button>
@@ -980,7 +982,7 @@ export default function DashboardPage() {
                     <div className="px-3 py-2 border-b">
                       <p className="text-sm font-medium">{session.user.email}</p>
                     </div>
-                    <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                       <LogOut className="w-4 h-4 mr-2" />
                       Sign Out
                     </DropdownMenuItem>
